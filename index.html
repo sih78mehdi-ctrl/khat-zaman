@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>⭐ خط الزمن | تاريخ الجزائر 1827-1971</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0C2A20">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="خط الزمن">
+<meta name="description" content="مراجعة تفاعلية للتواريخ المهمة في تاريخ الجزائر (1827-1971) — خط زمني، لعبة ربط واختبار، مقسّمة على 5 مراحل زمنية">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:#0C2A20;
+  --canvas-2:#123B2C;
+  --paper:#F7F1E1;
+  --paper-2:#EDE4CC;
+  --ink:#201A12;
+  --muted:#7A6E5A;
+  --line:#DED2B0;
+  --green:#3F6B52;
+  --red:#A8202F;
+  --gold:#C9A227;
+  --blue:#2B5B73;
+  --plum:#6B3F63;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--canvas);
+  background-image:
+    radial-gradient(circle at 12% 0%, rgba(201,162,39,0.08), transparent 42%),
+    radial-gradient(circle at 90% 100%, rgba(168,32,47,0.08), transparent 45%);
+  color:var(--ink);
+  font-family:'Cairo',sans-serif;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+.amiri{font-family:'Amiri',serif}
+.wrap{max-width:900px;margin:0 auto;padding:22px 16px 60px}
+button{font-family:'Cairo',sans-serif}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* ---------- header ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 20px;color:#F4EFE2}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .mark{font-size:22px}
+.brand h1{font-size:19px;margin:0;font-weight:800;font-family:'Amiri',serif}
+.backbtn{font-size:13px;font-weight:700;background:none;border:1px solid rgba(244,239,226,0.4);color:#F4EFE2;padding:8px 14px;border-radius:20px;cursor:pointer}
+.backbtn:active{background:rgba(244,239,226,0.15)}
+
+/* ---------- home ---------- */
+.catalog-note{color:#D9CFA9;font-size:13px;margin:0 0 16px 2px}
+.grid{display:grid;grid-template-columns:1fr;gap:14px}
+.mcard{
+  position:relative;background:var(--paper);border-radius:12px;
+  padding:22px 22px 22px 24px;cursor:pointer;border:1px solid rgba(0,0,0,0.05);
+  box-shadow:0 10px 24px -14px rgba(0,0,0,0.6);
+  border-right:5px solid var(--gold);
+}
+.mcard.review{border-right-color:var(--red);background:linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%)}
+.mcard:active{transform:scale(0.99)}
+.mcard .emoji{font-size:30px}
+.mcard .period{font-weight:700;font-size:12px;color:var(--red);margin:8px 0 2px}
+.mcard h2{font-size:19px;margin:2px 0 6px;font-weight:800;font-family:'Amiri',serif}
+.mcard p{margin:0;font-size:13px;color:var(--muted)}
+.mcard .count{display:inline-block;margin-top:10px;font-size:11.5px;font-weight:800;color:var(--ink);background:var(--paper-2);border:1px solid var(--line);border-radius:20px;padding:4px 12px}
+
+/* ---------- module head + tabs ---------- */
+.module-head{padding:4px 2px 16px}
+.module-head .period{color:var(--gold);font-weight:700;font-size:13px}
+.module-head h1{color:#F4EFE2;font-size:22px;margin:6px 0 0;font-family:'Amiri',serif}
+
+.tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px}
+.tab{
+  font-size:13px;font-weight:700;white-space:nowrap;
+  padding:10px 14px;border-radius:10px 10px 0 0;background:rgba(244,239,226,0.08);color:#D8DCE8;
+  border:none;cursor:pointer;border-bottom:3px solid transparent;
+}
+.tab.active{background:var(--paper);color:var(--ink);border-bottom:3px solid var(--gold)}
+
+.panel{background:var(--paper);border-radius:4px 14px 14px 14px;padding:20px;box-shadow:0 10px 24px -14px rgba(0,0,0,0.6)}
+
+/* ---------- timeline (signature element) ---------- */
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;font-size:11.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block;flex:0 0 auto}
+
+.timeline{position:relative}
+.timeline::before{
+  content:'';position:absolute;right:6px;top:6px;bottom:6px;width:3px;border-radius:3px;
+  background:var(--line);
+}
+.tl-item{position:relative;display:flex;align-items:flex-start;gap:13px;padding-bottom:22px}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{
+  flex:0 0 14px;width:14px;height:14px;margin-top:3px;border-radius:50%;
+  border:2px solid var(--paper);box-shadow:0 0 0 2px rgba(0,0,0,0.08);position:relative;z-index:1;
+}
+.tl-content{flex:1;min-width:0}
+.tl-date{font-weight:800;font-size:13px;color:var(--ink)}
+.tl-event{font-size:14.5px;color:var(--ink);margin-top:2px;line-height:1.5}
+
+/* ---------- shared game bits ---------- */
+.hq-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}
+.hq-badge{font-weight:800;font-size:13px;background:var(--paper-2);border:1px solid var(--line);border-radius:20px;padding:6px 14px}
+.hq-badge-red{color:var(--red)}
+.hq-btn{font-weight:700;font-size:13.5px;border:none;border-radius:20px;padding:11px 20px;cursor:pointer;background:var(--red);color:#fff}
+.hq-btn.hq-btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.hq-instructions{font-size:14px;color:var(--muted);margin:0 0 12px}
+.hq-stamp{margin-top:14px;text-align:center;padding:18px;border:2px solid var(--gold);border-radius:10px;font-weight:800;font-size:16px;color:var(--ink);background:var(--paper-2)}
+.hq-stamp.big .hq-score{display:block;font-size:34px;color:var(--red);margin-top:6px}
+
+/* ---------- matching game ---------- */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match-card{
+  width:100%;text-align:center;font-size:12.5px;font-weight:700;line-height:1.4;
+  padding:12px 8px;margin-bottom:8px;border:1.5px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;
+}
+.match-card.active{border-color:var(--gold);background:#FFF7E0}
+.match-card.matched{background:#E4F1E8;border-color:var(--green);color:var(--green);opacity:.75;cursor:default}
+.match-card.shake-wrong{animation:hqShake .5s;border-color:var(--red);background:#FBEBEA}
+@keyframes hqShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* ---------- quiz ---------- */
+.hq-progress{font-size:12.5px;color:var(--muted);margin-bottom:6px;font-weight:700}
+.hq-progress-bar{background:var(--paper-2);border-radius:10px;height:8px;margin-bottom:16px;overflow:hidden}
+.hq-progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:10px;transition:width .35s ease}
+.hq-qcard{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:18px}
+.hq-qtext{font-size:15.5px;font-weight:700;margin:0 0 14px;line-height:1.5}
+.hq-options{display:flex;flex-direction:column;gap:8px}
+.hq-option{text-align:right;font-size:14px;padding:12px 14px;border:1.5px solid var(--line);border-radius:9px;background:var(--paper-2);cursor:pointer}
+.hq-option.correct{background:#E4F1E8;border-color:var(--green);color:var(--green);font-weight:700}
+.hq-option.wrong{background:#FBEBEA;border-color:var(--red);color:var(--red);font-weight:700}
+
+@media (prefers-reduced-motion: reduce){
+  .hq-progress-fill, .tl-item, .match-card{transition:none}
+  .shake-wrong{animation:none}
+}
+</style>
+</head>
+<body>
+<div id="app" class="wrap"></div>
+
+<script>
+/* =================== البيانات =================== */
+/* كل التواريخ مرتبة ترتيبا زمنيا بدون أي تكرار، ومقسّمة على 5 مراحل (tranche) */
+const RAW_EVENTS = [
+ // ---- المرحلة 1 : 1827 - 1851 ----
+ {date:"29 أفريل 1827",        event:"وقوع حادثة المروحة",                                          tranche:1},
+ {date:"20 أكتوبر 1827",       event:"معركة نافارين",                                                tranche:1},
+ {date:"12 ماي 1830",          event:"إصدار رسالة بولينياك",                                         tranche:1},
+ {date:"25 ماي 1830",          event:"إقلاع الحملة الفرنسية نحو الجزائر لاحتلالها",                   tranche:1},
+ {date:"14 جوان 1830",         event:"وصول الحملة الفرنسية إلى ميناء سيدي فرج",                       tranche:1},
+ {date:"19 جوان 1830",         event:"معركة سطاولي",                                                  tranche:1},
+ {date:"5 جويلية 1830",        event:"سقوط العاصمة وتوقيع الداي حسين لمعاهدة الاستسلام",              tranche:1},
+ {date:"27 نوفمبر 1832",       event:"مبايعة الأمير عبد القادر",                                      tranche:1},
+ {date:"22 جوان 1834",         event:"مرسوم يعتبر الجزائر من الممتلكات الفرنسية",                     tranche:1},
+ {date:"1851",                 event:"مقاومة القبائل بقيادة بوبغلة ولالة فاطمة نسومر",                tranche:1},
+
+ // ---- المرحلة 2 : 1871 - 1937 ----
+ {date:"1871 - 1872",          event:"مقاومة المقراني والشيخ الحداد",                                 tranche:2},
+ {date:"1881",                 event:"مقاومة الشيخ بوعمامة",                                          tranche:2},
+ {date:"3 فيفري 1912",         event:"قانون التجنيد الاجباري",                                        tranche:2},
+ {date:"23 ماي 1919",          event:"الأمير خالد يوجه عريضة للرئيس الأمريكي ولسون",                  tranche:2},
+ {date:"20 جوان 1926",         event:"تأسيس حزب نجم شمال إفريقيا",                                    tranche:2},
+ {date:"5 ماي 1931",           event:"تأسيس جمعية العلماء المسلمين الجزائريين",                       tranche:2},
+ {date:"25 جانفي 1936",        event:"تأسيس الحزب الشيوعي الجزائري",                                  tranche:2},
+ {date:"7 جوان 1936",          event:"انعقاد المؤتمر الإسلامي في الجزائر",                            tranche:2},
+ {date:"8 جويلية 1936",        event:"مشروع بلوم فيوليت",                                             tranche:2},
+ {date:"11 مارس 1937",         event:"تأسيس حزب الشعب الجزائري",                                      tranche:2},
+
+ // ---- المرحلة 3 : 1943 - 1954 (ما قبل الثورة) ----
+ {date:"10 فيفري 1943",        event:"إصدار البيان الجزائري",                                         tranche:3},
+ {date:"14 مارس 1944",         event:"تأسيس حركة أحباب البيان والحرية",                               tranche:3},
+ {date:"8 ماي 1945",           event:"مجازر في سطيف وقالمة وخراطة",                                   tranche:3},
+ {date:"16 مارس 1946",         event:"مرسوم يسمح بعودة النشاط السياسي بالجزائر (العفو الشامل)",       tranche:3},
+ {date:"17 أفريل 1946",        event:"تأسيس الاتحاد الديمقراطي للبيان الجزائري",                      tranche:3},
+ {date:"أكتوبر 1946",          event:"تأسيس حركة انتصار الحريات الديمقراطية",                         tranche:3},
+ {date:"15 - 16 فيفري 1947",   event:"تأسيس المنظمة الخاصة",                                          tranche:3},
+ {date:"مارس 1950",            event:"اكتشاف أمر المنظمة الخاصة",                                     tranche:3},
+ {date:"23 مارس 1954",         event:"تأسيس اللجنة الثورية للوحدة والعمل",                            tranche:3},
+
+ // ---- المرحلة 4 : 1954 - 1958 (اندلاع الثورة وتنظيمها) ----
+ {date:"23 جوان 1954",         event:"عقد اجتماع 22 عضوا",                                            tranche:4},
+ {date:"23 أكتوبر 1954",       event:"اجتماع مجموعة الستة",                                           tranche:4},
+ {date:"1 نوفمبر 1954",        event:"اندلاع الثورة التحريرية",                                       tranche:4},
+ {date:"1955",                 event:"مشروع سوستال",                                                  tranche:4},
+ {date:"20 أوت 1955",          event:"هجومات الشمال القسنطيني",                                       tranche:4},
+ {date:"20 أوت 1956",          event:"انعقاد مؤتمر الصومام",                                          tranche:4},
+ {date:"22 أكتوبر 1956",       event:"اختطاف طائرة زعماء الجزائر الخمسة",                             tranche:4},
+ {date:"19 سبتمبر 1958",       event:"تأسيس الحكومة المؤقتة بالقاهرة",                                tranche:4},
+ {date:"03 أكتوبر 1958",       event:"مشروع قسنطينة",                                                 tranche:4},
+
+ // ---- المرحلة 5 : 1958 - 1971 (نحو الاستقلال) ----
+ {date:"23 أكتوبر 1958",       event:"إعلان شارل ديغول مشروع سلم الشجعان",                            tranche:5},
+ {date:"11 ديسمبر 1960",       event:"مظاهرات شعبية في الجزائر",                                      tranche:5},
+ {date:"17 أكتوبر 1961",       event:"مظاهرات الجالية الجزائرية بفرنسا",                              tranche:5},
+ {date:"7 - 18 مارس 1962",     event:"مفاوضات إيفيان حول استقلال الجزائر",                            tranche:5},
+ {date:"19 مارس 1962",         event:"وقف إطلاق النار بين الطرفين الجزائري والفرنسي",                 tranche:5},
+ {date:"1 جويلية 1962",        event:"استفتاء الاستقلال",                                             tranche:5},
+ {date:"05 جويلية 1962",       event:"استقلال الجزائر",                                               tranche:5},
+ {date:"08 أكتوبر 1962",       event:"انضمام الجزائر للأمم المتحدة",                                  tranche:5},
+ {date:"24 فيفري 1971",        event:"تأميم المحروقات",                                               tranche:5},
+];
+/* ترقيم فريد لكل حدث حسب ترتيبه الزمني (يُستعمل في لعبة الربط) */
+const EVENTS = RAW_EVENTS.map((e,i)=> Object.assign({n:i+1}, e));
+
+const TRANCHE_INFO = {
+  1:{ title:'من حادثة المروحة إلى بداية المقاومة', period:'1827 — 1851', icon:'🏛️', color:'var(--green)' },
+  2:{ title:'المقاومة الشعبية والحركة الوطنية',     period:'1871 — 1937', icon:'⚔️', color:'var(--red)' },
+  3:{ title:'نضوج الحركة الوطنية',                  period:'1943 — 1954', icon:'📜', color:'var(--gold)' },
+  4:{ title:'اندلاع الثورة التحريرية وتنظيمها',      period:'1954 — 1958', icon:'🔥', color:'var(--blue)' },
+  5:{ title:'نحو الاستقلال',                        period:'1958 — 1971', icon:'🇩🇿', color:'var(--plum)' },
+};
+
+/* 6 رُبقيات لعب: المراحل 1-5 كل واحدة على حدة، والرُبقية 6 تجمع كل التواريخ للمراجعة الشاملة */
+const MODULES = [1,2,3,4,5].map(t=>{
+  const info = TRANCHE_INFO[t];
+  const events = EVENTS.filter(e=>e.tranche===t);
+  return {
+    id:'t'+t, kind:'tranche', tranche:t,
+    title: info.title, period: info.period, icon: info.icon,
+    desc: 'راجع هذه المرحلة أولا ثم العب لتثبّت ما حفظته',
+    events
+  };
+});
+MODULES.push({
+  id:'all', kind:'review', tranche:null,
+  title:'المراجعة الشاملة', period:'1827 — 1971', icon:'🏆',
+  desc:'كل التواريخ الـ '+EVENTS.length+' مجتمعة — للمراجعة النهائية بعد إنهاء المراحل الخمس',
+  events: EVENTS
+});
+
+/* =================== أدوات =================== */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+const dotColor = e => TRANCHE_INFO[e.tranche].color;
+
+/* =================== الحالة والتنقل =================== */
+let state = { view:'home', moduleId:null, tab:'timeline' };
+function go(view, patch){ state = Object.assign({}, state, patch, {view}); window.scrollTo(0,0); render(); }
+function getModule(id){ return MODULES.find(m=>m.id===id); }
+
+/* =================== العرض =================== */
+function render(){
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  if(state.view==='home'){
+    const top = document.createElement('div');
+    top.className='top';
+    top.innerHTML = `<div class="brand"><span class="mark">⭐</span><h1>خط الزمن</h1></div>`;
+    app.appendChild(top);
+
+    const note = document.createElement('p');
+    note.className='catalog-note';
+    note.textContent = 'تاريخ الجزائر 1827 - 1971 — '+EVENTS.length+' تاريخا موزعة على 5 مراحل، بالإضافة إلى مراجعة شاملة';
+    app.appendChild(note);
+
+    const grid = document.createElement('div');
+    grid.className='grid';
+    MODULES.forEach(mod=>{
+      const card = document.createElement('div');
+      card.className='mcard'+(mod.kind==='review' ? ' review' : '');
+      card.innerHTML = `
+        <div class="emoji">${mod.icon}</div>
+        <div class="period">${mod.period}</div>
+        <h2>${mod.title}</h2>
+        <p>${mod.desc}</p>
+        <span class="count">${mod.events.length} تاريخا</span>`;
+      card.onclick = ()=> go('module', {moduleId:mod.id, tab:'timeline'});
+      grid.appendChild(card);
+    });
+    app.appendChild(grid);
+    return;
+  }
+
+  if(state.view==='module'){
+    const mod = getModule(state.moduleId);
+
+    const top = document.createElement('div');
+    top.className='top';
+    top.innerHTML = `<div class="brand"><span class="mark">${mod.icon}</span></div>`;
+    const back = document.createElement('button');
+    back.className='backbtn'; back.textContent='→ رجوع';
+    back.onclick = ()=> go('home');
+    top.appendChild(back);
+    app.appendChild(top);
+
+    const head = document.createElement('div');
+    head.className='module-head';
+    head.innerHTML = `<div class="period">${mod.icon} ${mod.period}</div><h1>${mod.title}</h1>`;
+    app.appendChild(head);
+
+    const tabs = document.createElement('div');
+    tabs.className='tabs';
+    const tabDefs = [
+      ['timeline','📜 الخط الزمني'],
+      ['match','🔗 اربط التاريخ بالحدث'],
+      ['quiz','🎯 اختبار']
+    ];
+    tabDefs.forEach(([key,label])=>{
+      const b = document.createElement('button');
+      b.className='tab'+(state.tab===key?' active':'');
+      b.textContent = label;
+      b.onclick = ()=> go('module', {tab:key});
+      tabs.appendChild(b);
+    });
+    app.appendChild(tabs);
+
+    const panel = document.createElement('div');
+    panel.className='panel';
+    app.appendChild(panel);
+
+    if(state.tab==='timeline') renderTimeline(panel, mod);
+    if(state.tab==='match') renderMatchGame(panel, mod.events);
+    if(state.tab==='quiz') renderQuizGame(panel, mod.events);
+    return;
+  }
+}
+
+/* =================== الخط الزمني =================== */
+function renderTimeline(panel, mod){
+  const events = mod.events;
+  let legendHtml = '';
+  if(mod.kind==='review'){
+    legendHtml = `<div class="legend">${
+      [1,2,3,4,5].map(t=> `<span><i style="background:${TRANCHE_INFO[t].color}"></i> ${TRANCHE_INFO[t].title}</span>`).join('')
+    }</div>`;
+  }
+  panel.innerHTML = `${legendHtml}<div class="timeline" id="tl"></div>`;
+  const tl = panel.querySelector('#tl');
+  events.forEach(e=>{
+    const item = document.createElement('div');
+    item.className='tl-item';
+    item.innerHTML = `
+      <div class="tl-dot" style="background:${dotColor(e)}"></div>
+      <div class="tl-content">
+        <div class="tl-date">${e.date}</div>
+        <div class="tl-event">${e.event}</div>
+      </div>`;
+    tl.appendChild(item);
+  });
+}
+
+/* =================== لعبة الربط =================== */
+function renderMatchGame(container, events){
+  const ROUND = Math.min(6, events.length);
+  let roundEvents, dates, items, matched, mistakes, selDate, selItem;
+
+  function newRound(){
+    roundEvents = shuffle(events).slice(0, ROUND);
+    dates = shuffle(roundEvents.map(e=>({id:e.n, text:e.date})));
+    items = shuffle(roundEvents.map(e=>({id:e.n, text:e.event})));
+    matched = new Set(); mistakes = 0; selDate = null; selItem = null;
+  }
+  newRound();
+
+  function build(){
+    container.innerHTML = `
+      <p class="hq-instructions">اضغط على تاريخ ثم على الحدث الذي يوافقه لتربط بينهما.</p>
+      <div class="hq-toolbar">
+        <div class="hq-badge">✓ ${matched.size}/${ROUND}</div>
+        <div class="hq-badge hq-badge-red">✗ ${mistakes}</div>
+        <button class="hq-btn hq-btn-ghost" id="newRoundBtn">جولة جديدة</button>
+      </div>
+      <div class="match-grid">
+        <div class="match-col" id="colDates"></div>
+        <div class="match-col" id="colEvents"></div>
+      </div>
+      <div id="matchDone"></div>
+    `;
+    const colDates = container.querySelector('#colDates');
+    const colEvents = container.querySelector('#colEvents');
+
+    dates.forEach(d=>{
+      const b = document.createElement('button');
+      b.className='match-card'+(matched.has(d.id)?' matched':'');
+      b.textContent = d.text;
+      b.disabled = matched.has(d.id);
+      b.onclick = ()=> selectDate(d.id, b);
+      colDates.appendChild(b);
+    });
+    items.forEach(it=>{
+      const b = document.createElement('button');
+      b.className='match-card'+(matched.has(it.id)?' matched':'');
+      b.textContent = it.text;
+      b.disabled = matched.has(it.id);
+      b.onclick = ()=> selectItem(it.id, b);
+      colEvents.appendChild(b);
+    });
+    container.querySelector('#newRoundBtn').onclick = ()=>{ newRound(); build(); };
+
+    if(matched.size===ROUND){
+      container.querySelector('#matchDone').innerHTML =
+        `<div class="hq-stamp">🎉 أحسنت! ${ROUND}/${ROUND} — عدد الأخطاء: ${mistakes}</div>`;
+    }
+  }
+
+  function selectDate(id, btn){
+    if(matched.has(id)) return;
+    container.querySelectorAll('#colDates .match-card').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    selDate = id;
+    tryMatch();
+  }
+  function selectItem(id, btn){
+    if(matched.has(id)) return;
+    container.querySelectorAll('#colEvents .match-card').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    selItem = id;
+    tryMatch();
+  }
+  function tryMatch(){
+    if(selDate==null || selItem==null) return;
+    if(selDate===selItem){
+      matched.add(selDate);
+      selDate = null; selItem = null;
+      build();
+    } else {
+      mistakes++;
+      const dBtn = container.querySelector('#colDates .active');
+      const iBtn = container.querySelector('#colEvents .active');
+      if(dBtn) dBtn.classList.add('shake-wrong');
+      if(iBtn) iBtn.classList.add('shake-wrong');
+      setTimeout(()=>{ selDate=null; selItem=null; build(); }, 550);
+    }
+  }
+
+  build();
+}
+
+/* =================== الاختبار (QCM) =================== */
+function buildQuestions(events){
+  return shuffle(events).map(e=>{
+    const type = Math.random() < 0.5 ? 'A' : 'B';
+    if(type==='A'){
+      const distractors = shuffle(events.filter(x=>x.n!==e.n)).slice(0,3).map(x=>x.event);
+      return { q:`ماذا حدث في: ${e.date} ؟`, options: shuffle([e.event, ...distractors]), answer:e.event };
+    } else {
+      const distractors = shuffle(events.filter(x=>x.n!==e.n)).slice(0,3).map(x=>x.date);
+      return { q:`متى وقع الحدث التالي؟ «${e.event}»`, options: shuffle([e.date, ...distractors]), answer:e.date };
+    }
+  });
+}
+
+function renderQuizGame(container, events){
+  let questions = buildQuestions(events);
+  let idx = 0, score = 0;
+
+  function build(){
+    if(idx >= questions.length){
+      container.innerHTML = `
+        <div class="hq-stamp big">🏆 النتيجة النهائية<span class="hq-score">${score}/${questions.length}</span></div>
+        <div class="hq-toolbar"><button class="hq-btn" id="retryBtn">أعد المحاولة</button></div>
+      `;
+      container.querySelector('#retryBtn').onclick = ()=>{
+        questions = buildQuestions(events); idx=0; score=0; build();
+      };
+      return;
+    }
+    const q = questions[idx];
+    container.innerHTML = `
+      <div class="hq-progress">سؤال ${idx+1} / ${questions.length} — النقاط: ${score}</div>
+      <div class="hq-progress-bar"><div class="hq-progress-fill" style="width:${(idx/questions.length)*100}%"></div></div>
+      <div class="hq-qcard">
+        <p class="hq-qtext">${q.q}</p>
+        <div class="hq-options" id="opts"></div>
+      </div>
+    `;
+    const opts = container.querySelector('#opts');
+    q.options.forEach(o=>{
+      const b = document.createElement('button');
+      b.className='hq-option';
+      b.textContent = o;
+      b.onclick = ()=> answer(o, b, q);
+      opts.appendChild(b);
+    });
+  }
+  function answer(chosen, btn, q){
+    container.querySelectorAll('.hq-option').forEach(b=> b.disabled = true);
+    if(chosen === q.answer){
+      btn.classList.add('correct'); score++;
+    } else {
+      btn.classList.add('wrong');
+      container.querySelectorAll('.hq-option').forEach(b=>{ if(b.textContent===q.answer) b.classList.add('correct'); });
+    }
+    setTimeout(()=>{ idx++; build(); }, 900);
+  }
+  build();
+}
+
+render();
+
+/* =================== تسجيل Service Worker (وضع عدم الاتصال) =================== */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
